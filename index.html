@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-width=1.0">
-  <title>FHSP - Seeding & Ranking</title>
+  <title>FHSS｜Fly High!! Seeding System</title>
   <script>
-    // 💡 画面描画の前にCookieを読み込み、テーマのチラつきを防ぐ
     function getThemeCookie() {
       const match = document.cookie.match(new RegExp('(^| )fhsp_theme=([^;]+)'));
-      return match ? match[2] : 'dark'; // デフォルトはダーク
+      return match ? match[2] : 'dark';
     }
     document.documentElement.setAttribute('data-theme', getThemeCookie());
   </script>
@@ -43,12 +42,12 @@
       overflow-x: hidden;
     }
 
-    /* 🔘 トグルスイッチ（画面最前面に固定配置） */
+    /* 🔘 トグルスイッチ */
     .theme-switch-wrapper {
       position: fixed;
       top: 1.2rem;
       right: 2rem;
-      z-index: 10000; /* ロード画面(9999)よりも上に配置 */
+      z-index: 10000;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -112,18 +111,17 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 0; /* 余白をゼロに */
+      gap: 0;
       perspective: 1000px;
     }
 
-    /* 🪽 羽のアニメーション */
     .intro-wing {
       width: 250px;
       height: 250px;
       background-image: url('Flyhigh_logo.png');
       background-size: contain;
       background-repeat: no-repeat;
-      background-position: bottom center; /* 下揃えにして文字に近づける */
+      background-position: bottom center; 
       transform-origin: center;
       animation: floatWing 1.5s ease-in-out infinite alternate, wingFlyAway 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) 1.5s forwards;
     }
@@ -139,15 +137,14 @@
       100% { transform: translate(-100vw, -100vh) scale(0.5) rotate(45deg); opacity: 0; }
     }
 
-    /* ✒️ 文字のアニメーション */
     .intro-text {
-      width: 770px;  /* 1.1倍に拡大 */
+      width: 770px;  
       height: 150px; 
-      margin-top: -30px; /* ネガティブマージンで羽に近づける */
+      margin-top: -30px; 
       background-image: var(--intro-text-img);
       background-size: contain;
       background-repeat: no-repeat;
-      background-position: top center; /* 上揃えにして羽に近づける */
+      background-position: top center; 
       animation: textSlideInOut 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
@@ -169,10 +166,24 @@
       background-color: var(--card-bg);
       border-bottom: 1px solid var(--border-color);
       transition: background-color var(--transition-speed);
-      height: 70px; /* トグルスイッチに合わせた高さ固定 */
+      height: 70px; 
     }
-    .header-title { font-size: 1.5rem; font-weight: 900; }
-    .header-title span { color: var(--primary-color); }
+    
+    /* ヘッダータイトルのスタイリング変更 */
+    .header-title { 
+      font-size: 1.5rem; 
+      font-weight: 900; 
+      display: flex; 
+      align-items: baseline; 
+    }
+    .header-title span.highlight { color: var(--primary-color); }
+    .header-title span.sub-title {
+      font-size: 0.9rem;
+      font-weight: normal;
+      color: var(--text-muted);
+      margin-left: 12px;
+      letter-spacing: 0.02em;
+    }
     
     main { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
     .search-bar { display: flex; gap: 10px; margin-bottom: 2rem; }
@@ -192,11 +203,11 @@
       .theme-switch-wrapper { right: 1rem; top: 1rem; }
       .search-bar { flex-direction: column; } 
       .intro-wing { width: 180px; height: 180px; } 
-      .intro-text { 
-        width: 385px;  /* 1.1倍に拡大 */
-        height: 80px; 
-        margin-top: -20px; /* スマホでもロゴに近づける */
-      }
+      .intro-text { width: 385px; height: 80px; margin-top: -20px; }
+      
+      /* 長いサイト名がスマホで折れないように調整 */
+      .header-title { font-size: 1.1rem; }
+      .header-title span.sub-title { font-size: 0.7rem; margin-left: 6px; }
     }
   </style>
 </head>
@@ -217,9 +228,12 @@
     </div>
   </div>
 
+  <!-- 🏷 ヘッダー (FHSS仕様) -->
   <header>
-    <div class="header-title"><span>F</span>HSP</div>
-    <!-- ヘッダー右側はトグルボタンがFixedで乗るため空けておきます -->
+    <div class="header-title">
+      <span class="highlight">F</span>HSS
+      <span class="sub-title">｜Fly High!! Seeding System</span>
+    </div>
   </header>
 
   <main>
@@ -240,30 +254,25 @@
   </main>
 
   <script>
-    // --- トグルボタンの初期状態セット ---
     const themeToggle = document.getElementById('theme-toggle');
     const htmlEl = document.documentElement;
     
-    // Cookieのロードは <head> 内で完了しているため、それに合わせてスイッチの位置を変える
     if (htmlEl.getAttribute('data-theme') === 'light') {
       themeToggle.checked = true;
     }
 
-    // --- 30日間のCookie保存機能 ---
     function setThemeCookie(themeName) {
       const d = new Date();
-      d.setTime(d.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30日
+      d.setTime(d.getTime() + (30 * 24 * 60 * 60 * 1000));
       document.cookie = "fhsp_theme=" + themeName + ";expires=" + d.toUTCString() + ";path=/";
     }
 
-    // --- トグル操作時のイベント ---
     themeToggle.addEventListener('change', (e) => {
       const newTheme = e.target.checked ? 'light' : 'dark';
       htmlEl.setAttribute('data-theme', newTheme);
       setThemeCookie(newTheme);
     });
 
-    // --- オープニング終了 ---
     window.addEventListener('load', () => {
       const introScreen = document.getElementById('intro-screen');
       setTimeout(() => {
