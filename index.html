@@ -42,7 +42,7 @@
     #intro-screen {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100vh;
-      background-color: var(--bg-color); /* 現在のテーマの背景色に合わせる */
+      background-color: var(--bg-color);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -50,63 +50,59 @@
       transition: opacity 0.8s ease, visibility 0.8s ease;
     }
 
-    /* 羽と文字を横並びに配置するためのコンテナ */
+    /* 羽と文字を縦並びに配置するためのコンテナ */
     .intro-container {
       display: flex;
+      flex-direction: column; /* ここを column に変更して縦並びに */
+      justify-content: center;
       align-items: center;
-      gap: 20px; /* 羽と文字の隙間 */
+      gap: 30px; /* 羽と文字の隙間 */
       perspective: 1000px;
     }
 
     /* 🪽 羽のアニメーション */
     .intro-wing {
-      width: 150px;
-      height: 150px;
+      width: 250px;  /* 150pxから大幅拡大 */
+      height: 250px; /* 150pxから大幅拡大 */
       background-image: url('Flyhigh_logo.png');
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
-      transform-origin: center; /* 揺れと飛翔の中心 */
+      transform-origin: center;
       
-      /* 
-       * 1. 最初に小さく揺れる (floatWing 0s ~ 1.5s)
-       * 2. その後、左上へ飛翔 (wingFlyAway 1.5s ~ 2.5s)
-       */
       animation: 
         floatWing 1.5s ease-in-out infinite alternate,
         wingFlyAway 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) 1.5s forwards;
     }
     
-    /* ロード中の微細な揺れ（風に吹かれているような演出） */
     @keyframes floatWing {
       0%   { transform: translateY(0) rotate(0deg); }
       100% { transform: translateY(-5px) rotate(2deg); }
     }
 
-    /* ロード完了時の飛翔（左上へ） */
     @keyframes wingFlyAway {
       0%   { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
-      20%  { transform: translate(10px, 10px) scale(0.9) rotate(-10deg); opacity: 1; } /* 飛ぶ前の沈み込み */
+      20%  { transform: translate(10px, 10px) scale(0.9) rotate(-10deg); opacity: 1; }
       100% { transform: translate(-100vw, -100vh) scale(0.5) rotate(45deg); opacity: 0; }
     }
 
     /* ✒️ 文字のアニメーション */
     .intro-text {
-      width: 300px;
-      height: 100px;
+      width: 500px;  /* 300pxから大幅拡大 */
+      height: 150px; /* 100pxから拡大 */
       background-image: var(--intro-text-img);
       background-size: contain;
       background-repeat: no-repeat;
-      background-position: center left;
+      background-position: center center; /* 中央揃えに変更 */
       
       animation: textSlideInOut 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
     @keyframes textSlideInOut {
       0%   { transform: translateX(-50vw); opacity: 0; }
-      20%  { transform: translateX(0); opacity: 1; } /* 左からスライドインして静止 */
-      60%  { transform: translateX(0); opacity: 1; } /* 羽が飛ぶまで待機 (1.5sのタイミングと合わせる) */
-      100% { transform: translateX(100vw); opacity: 0; } /* 右へスライドアウト */
+      20%  { transform: translateX(0); opacity: 1; }
+      60%  { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(100vw); opacity: 0; }
     }
 
     .intro-hidden {
@@ -143,17 +139,17 @@
     .rank-name { font-size: 1.2rem; font-weight: bold; }
     .rank-score { font-size: 1.5rem; font-weight: 900; color: var(--primary-color); }
     
+    /* スマホ画面でのサイズ調整 */
     @media (max-width: 600px) { 
       header { padding: 1rem; } 
       .search-bar { flex-direction: column; } 
-      .intro-container { flex-direction: column; gap: 10px; }
-      .intro-text { background-position: center; }
+      .intro-wing { width: 180px; height: 180px; } /* スマホ用ロゴサイズ */
+      .intro-text { width: 300px; height: 90px; }  /* スマホ用文字サイズ */
     }
   </style>
 </head>
 <body>
 
-  <!-- 🎬 オープニングトランジション画面 -->
   <div id="intro-screen">
     <div class="intro-container">
       <div class="intro-wing"></div>
@@ -161,13 +157,11 @@
     </div>
   </div>
 
-  <!-- 🏷 ヘッダー -->
   <header>
     <div class="header-title"><span>F</span>HSP</div>
     <button class="theme-toggle-btn" id="theme-btn">☀️ Light Mode</button>
   </header>
 
-  <!-- 📄 メインコンテンツ -->
   <main>
     <div class="search-bar">
       <input type="text" placeholder="プレイヤー名で検索 (例: てすぬー)">
@@ -186,16 +180,13 @@
   </main>
 
   <script>
-    // 1. オープニング終了後に画面を消す
     window.addEventListener('load', () => {
       const introScreen = document.getElementById('intro-screen');
-      // アニメーション完了時間（2.5秒）に合わせてフェードアウトを開始
       setTimeout(() => {
         introScreen.classList.add('intro-hidden');
       }, 2500); 
     });
 
-    // 2. テーマ切り替え
     const themeBtn = document.getElementById('theme-btn');
     const htmlEl = document.documentElement;
 
@@ -204,8 +195,6 @@
       if (currentTheme === 'dark') {
         htmlEl.setAttribute('data-theme', 'light');
         themeBtn.textContent = '🌙 Dark Mode';
-        // オープニング画面の文字画像も切り替わるようにしていますが、
-        // ロード後は display:none 的になっているため再読み込み時などに反映されます
       } else {
         htmlEl.setAttribute('data-theme', 'dark');
         themeBtn.textContent = '☀️ Light Mode';
