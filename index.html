@@ -14,6 +14,9 @@
       --text-muted: #aaaaaa;
       --border-color: #333333;
       --transition-speed: 0.3s;
+      
+      /* アニメーション用の変数 */
+      --intro-text-img: url('flyhigh_text_white.png'); /* ダークモード時の文字画像 */
     }
 
     [data-theme="light"] {
@@ -22,6 +25,8 @@
       --text-main: #1a1a1a;
       --text-muted: #666666;
       --border-color: #e1e4e8;
+      
+      --intro-text-img: url('flyhigh_text_black.png'); /* ライトモード時の文字画像 */
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,89 +42,80 @@
     #intro-screen {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100vh;
-      background-color: #0a0a0a; /* ロゴが映えるダーク背景 */
+      background-color: var(--bg-color); /* 現在のテーマの背景色に合わせる */
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 9999;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
     }
 
+    /* 羽と文字を横並びに配置するためのコンテナ */
     .intro-container {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 20px;
-      perspective: 1000px; /* 羽ばたきの3D表現用 */
+      gap: 20px; /* 羽と文字の隙間 */
+      perspective: 1000px;
     }
 
     /* 🪽 羽のアニメーション */
     .intro-wing {
-      width: 120px;
-      transform-origin: bottom left; /* 羽の根元を軸に動かす */
-      animation: wingFlyAway 2.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-    }
-    
-    /* 📝 実際の画像ファイルを使う場合はこちらを有効化してください */
-    /*
-    .intro-wing {
-      background-image: url('wing.png');
+      width: 150px;
+      height: 150px;
+      background-image: url('Flyhigh_logo.png');
       background-size: contain;
       background-repeat: no-repeat;
-      height: 120px;
+      background-position: center;
+      transform-origin: center; /* 揺れと飛翔の中心 */
+      
+      /* 
+       * 1. 最初に小さく揺れる (floatWing 0s ~ 1.5s)
+       * 2. その後、左上へ飛翔 (wingFlyAway 1.5s ~ 2.5s)
+       */
+      animation: 
+        floatWing 1.5s ease-in-out infinite alternate,
+        wingFlyAway 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) 1.5s forwards;
     }
-    */
+    
+    /* ロード中の微細な揺れ（風に吹かれているような演出） */
+    @keyframes floatWing {
+      0%   { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(-5px) rotate(2deg); }
+    }
 
+    /* ロード完了時の飛翔（左上へ） */
     @keyframes wingFlyAway {
-      0%   { transform: scale(1) rotate(0deg); opacity: 0; }
-      10%  { transform: scale(1) rotate(0deg); opacity: 1; }
-      
-      /* 羽ばたき 1回目 (Y軸で回転させて立体的にパタッとさせる) */
-      30%  { transform: rotateY(65deg) rotateZ(-5deg); }
-      40%  { transform: rotateY(0deg) rotateZ(0deg); }
-      
-      /* 羽ばたき 2回目 */
-      55%  { transform: rotateY(65deg) rotateZ(-10deg); }
-      65%  { transform: rotateY(0deg) rotateZ(0deg); }
-      
-      /* 画面右上へ飛び立つ */
-      80%  { transform: rotateY(45deg) translate(150vw, -150vh) scale(0.8); opacity: 1; }
-      100% { transform: rotateY(45deg) translate(150vw, -150vh) scale(0.8); opacity: 0; }
+      0%   { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+      20%  { transform: translate(10px, 10px) scale(0.9) rotate(-10deg); opacity: 1; } /* 飛ぶ前の沈み込み */
+      100% { transform: translate(-100vw, -100vh) scale(0.5) rotate(45deg); opacity: 0; }
     }
 
     /* ✒️ 文字のアニメーション */
     .intro-text {
-      font-size: 4rem;
-      font-weight: 300;
-      font-style: italic;
-      color: #ffffff;
-      letter-spacing: 0.02em;
-      animation: textSlideInOut 2.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      width: 300px;
+      height: 100px;
+      background-image: var(--intro-text-img);
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center left;
+      
+      animation: textSlideInOut 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
-
-    /* 📝 実際の画像ファイルを使う場合はこちらを有効化してください */
-    /*
-    .intro-text {
-      content: url('text.png');
-      height: 60px;
-    }
-    */
 
     @keyframes textSlideInOut {
-      0%   { transform: translateX(-100vw); opacity: 0; }
-      15%  { transform: translateX(0); opacity: 1; } /* 左からスライドイン */
-      65%  { transform: translateX(0); opacity: 1; } /* 中央で待機 */
-      85%  { transform: translateX(100vw); opacity: 0; } /* 羽と一緒に右へ退場 */
-      100% { transform: translateX(100vw); opacity: 0; }
+      0%   { transform: translateX(-50vw); opacity: 0; }
+      20%  { transform: translateX(0); opacity: 1; } /* 左からスライドインして静止 */
+      60%  { transform: translateX(0); opacity: 1; } /* 羽が飛ぶまで待機 (1.5sのタイミングと合わせる) */
+      100% { transform: translateX(100vw); opacity: 0; } /* 右へスライドアウト */
     }
 
     .intro-hidden {
       opacity: 0 !important;
       visibility: hidden !important;
+      pointer-events: none;
     }
 
-    /* 📱 ヘッダーとメインコンテンツ（前回と同じ） */
+    /* 📱 ヘッダーとメインコンテンツ */
     header {
       display: flex;
       justify-content: space-between;
@@ -131,19 +127,28 @@
     }
     .header-title { font-size: 1.5rem; font-weight: 900; }
     .header-title span { color: var(--primary-color); }
+    
     .theme-toggle-btn { background: none; border: 1px solid var(--border-color); color: var(--text-main); padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: all 0.2s; }
     .theme-toggle-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+    
     main { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
     .search-bar { display: flex; gap: 10px; margin-bottom: 2rem; }
     .search-bar input { flex: 1; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-main); font-size: 1rem; outline: none; transition: border-color 0.2s; }
     .search-bar input:focus { border-color: var(--primary-color); }
+    
     .ranking-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; transition: transform 0.2s, box-shadow 0.2s; }
     .ranking-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(250, 133, 52, 0.15); border-color: var(--primary-color); }
     .rank-info { display: flex; align-items: center; gap: 15px; }
     .rank-num { font-size: 1.5rem; font-weight: bold; color: var(--text-muted); width: 40px; }
     .rank-name { font-size: 1.2rem; font-weight: bold; }
     .rank-score { font-size: 1.5rem; font-weight: 900; color: var(--primary-color); }
-    @media (max-width: 600px) { header { padding: 1rem; } .search-bar { flex-direction: column; } }
+    
+    @media (max-width: 600px) { 
+      header { padding: 1rem; } 
+      .search-bar { flex-direction: column; } 
+      .intro-container { flex-direction: column; gap: 10px; }
+      .intro-text { background-position: center; }
+    }
   </style>
 </head>
 <body>
@@ -151,18 +156,8 @@
   <!-- 🎬 オープニングトランジション画面 -->
   <div id="intro-screen">
     <div class="intro-container">
-      
-      <!-- 羽の部分 (画像に差し替えるまでのダミーSVG) -->
-      <div class="intro-wing">
-        <svg viewBox="0 0 100 100" width="100%" height="100%">
-          <path d="M10,90 Q15,40 90,10 Q60,30 50,75 Z" fill="#FA8534"/>
-          <path d="M35,75 Q45,45 80,35 Q65,45 50,70 Z" fill="#e0d4cc"/>
-        </svg>
-      </div>
-      
-      <!-- 文字の部分 -->
-      <div class="intro-text">Fly High!!</div>
-      
+      <div class="intro-wing"></div>
+      <div class="intro-text"></div>
     </div>
   </div>
 
@@ -194,7 +189,7 @@
     // 1. オープニング終了後に画面を消す
     window.addEventListener('load', () => {
       const introScreen = document.getElementById('intro-screen');
-      // アニメーション完了時間（2.6秒）に合わせてフェードアウトを開始
+      // アニメーション完了時間（2.5秒）に合わせてフェードアウトを開始
       setTimeout(() => {
         introScreen.classList.add('intro-hidden');
       }, 2500); 
@@ -209,6 +204,8 @@
       if (currentTheme === 'dark') {
         htmlEl.setAttribute('data-theme', 'light');
         themeBtn.textContent = '🌙 Dark Mode';
+        // オープニング画面の文字画像も切り替わるようにしていますが、
+        // ロード後は display:none 的になっているため再読み込み時などに反映されます
       } else {
         htmlEl.setAttribute('data-theme', 'dark');
         themeBtn.textContent = '☀️ Light Mode';
