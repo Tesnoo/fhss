@@ -169,20 +169,25 @@
       height: 70px; 
     }
     
-    /* ヘッダータイトルのスタイリング変更 */
-    .header-title { 
-      font-size: 1.5rem; 
-      font-weight: 900; 
-      display: flex; 
-      align-items: baseline; 
+    /* ヘッダータイトルの2段組スタイリング */
+    .header-title-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.1; /* 上下の行間を詰める */
     }
-    .header-title span.highlight { color: var(--primary-color); }
-    .header-title span.sub-title {
-      font-size: 0.9rem;
+    .header-title-main { 
+      font-size: 1.6rem; 
+      font-weight: 900; 
+      letter-spacing: 0.05em;
+    }
+    .header-title-main span.highlight { color: var(--primary-color); }
+    
+    .header-title-sub {
+      font-size: 0.75rem;
       font-weight: normal;
       color: var(--text-muted);
-      margin-left: 12px;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.03em;
     }
     
     main { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
@@ -205,9 +210,9 @@
       .intro-wing { width: 180px; height: 180px; } 
       .intro-text { width: 385px; height: 80px; margin-top: -20px; }
       
-      /* 長いサイト名がスマホで折れないように調整 */
-      .header-title { font-size: 1.1rem; }
-      .header-title span.sub-title { font-size: 0.7rem; margin-left: 6px; }
+      /* スマホ用の2段組フォントサイズ調整 */
+      .header-title-main { font-size: 1.3rem; }
+      .header-title-sub { font-size: 0.65rem; }
     }
   </style>
 </head>
@@ -228,11 +233,11 @@
     </div>
   </div>
 
-  <!-- 🏷 ヘッダー (FHSS仕様) -->
+  <!-- 🏷 ヘッダー (FHSS仕様 2段組) -->
   <header>
-    <div class="header-title">
-      <span class="highlight">F</span>HSS
-      <span class="sub-title">｜Fly High!! Seeding System</span>
+    <div class="header-title-container">
+      <div class="header-title-main"><span class="highlight">F</span>HSS</div>
+      <div class="header-title-sub">Fly High!! Seeding System</div>
     </div>
   </header>
 
