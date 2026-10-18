@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-width=1.0">
   <title>FHSS｜Fly High!! Seeding System</title>
   
-  <!-- 📌 サイトのアイコン（ファビコン）を設定 -->
   <link rel="icon" href="Flyhigh_logo.png" type="image/png">
   
   <script>
@@ -16,7 +15,6 @@
     document.documentElement.setAttribute('data-theme', getThemeCookie());
   </script>
   <style>
-    /* 🎨 カラーテーマ */
     :root {
       --primary-color: #FA8534;
       --bg-color: #121212;
@@ -46,17 +44,10 @@
       overflow-x: hidden;
     }
 
-    /* 🔘 トグルスイッチ */
     .theme-switch-wrapper {
-      position: fixed;
-      top: 1.2rem;
-      right: 2rem;
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      position: fixed; top: 1.2rem; right: 2rem; z-index: 10000;
+      display: flex; align-items: center; gap: 10px;
     }
-    
     .theme-switch { position: relative; display: inline-block; width: 54px; height: 28px; }
     .theme-switch input { opacity: 0; width: 0; height: 0; }
     
@@ -72,7 +63,6 @@
     input:checked + .slider { background-color: #e1e4e8; border-color: #ccc; }
     input:checked + .slider:before { transform: translateX(26px); content: "☀️"; background-color: #ffffff; }
 
-    /* ✨ オープニングトランジション画面 */
     #intro-screen {
       position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
       background-color: var(--bg-color); display: flex; justify-content: center;
@@ -85,12 +75,9 @@
     }
 
     .intro-wing {
-      width: 250px;
-      height: 250px;
-      background-image: url('Flyhigh_logo.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: bottom center; 
+      width: 250px; height: 250px;
+      background-image: url('Flyhigh_logo.png'); background-size: contain;
+      background-repeat: no-repeat; background-position: bottom center; 
       transform-origin: center;
       animation: floatWing 1.5s ease-in-out infinite alternate, wingFlyAway 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) 1.5s forwards;
     }
@@ -107,15 +94,13 @@
     }
 
     .intro-text {
-      /* 📌 ロゴ(250px)を若干オーバーする320pxで固定 */
       width: 320px;  
-      height: 120px; 
-      margin-top: -30px; 
+      height: 150px; /* 切り取られないように高さを確保 */
+      margin-top: -60px; /* 中央揃えにした分、羽にしっかり近づける */
       background-image: var(--intro-text-img);
-      /* 画像の横幅を100%に強制し、見かけ上のサイズをコントロール */
       background-size: 100% auto; 
       background-repeat: no-repeat;
-      background-position: top center; 
+      background-position: center center; /* 中央の文字部分だけを表示させる */
       animation: textSlideInOut 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
@@ -128,7 +113,6 @@
 
     .intro-hidden { opacity: 0 !important; visibility: hidden !important; pointer-events: none; }
 
-    /* 📱 ヘッダー */
     header {
       display: flex; justify-content: space-between; align-items: center;
       padding: 1rem 2rem; background-color: var(--card-bg);
@@ -136,19 +120,13 @@
     }
     
     .header-left { display: flex; align-items: center; gap: 15px; }
-    
-    /* 📌 ヘッダーのロゴ追加 */
     .header-logo { width: 45px; height: 45px; object-fit: contain; }
-    
     .header-title-container { display: flex; flex-direction: column; justify-content: center; line-height: 1.1; }
-    /* 📌 文字サイズを拡大 */
     .header-title-main { font-size: 1.8rem; font-weight: 900; letter-spacing: 0.05em; }
     .header-title-main span.highlight { color: var(--primary-color); }
     .header-title-sub { font-size: 0.85rem; color: var(--text-muted); letter-spacing: 0.03em; }
+    .header-right { margin-right: 70px; }
     
-    .header-right { margin-right: 70px; /* トグルスイッチに被らないように余白 */ }
-    
-    /* 📌 シード設定ボタン */
     .btn-settings {
       background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);
       padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: bold;
@@ -156,7 +134,6 @@
     }
     .btn-settings:hover { border-color: var(--primary-color); color: var(--primary-color); }
 
-    /* 📄 メインコンテンツ領域 */
     main { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
     .search-bar { display: flex; gap: 10px; margin-bottom: 2rem; }
     .search-bar input { flex: 1; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-main); font-size: 1rem; outline: none; transition: border-color 0.2s; }
@@ -169,14 +146,12 @@
     .rank-name { font-size: 1.2rem; font-weight: bold; }
     .rank-score { font-size: 1.5rem; font-weight: 900; color: var(--primary-color); }
     
-    /* 📌 画面切り替え用のクラス */
     .hidden { display: none !important; }
 
-    /* スマホ画面でのサイズ調整 */
     @media (max-width: 600px) { 
       header { padding: 1rem; } 
       .theme-switch-wrapper { right: 1rem; top: 1rem; }
-      .header-right { margin-right: 55px; } /* スマホ用の余白調整 */
+      .header-right { margin-right: 55px; } 
       .header-logo { width: 35px; height: 35px; }
       .header-title-main { font-size: 1.5rem; }
       .header-title-sub { font-size: 0.75rem; }
@@ -184,13 +159,12 @@
       
       .search-bar { flex-direction: column; } 
       .intro-wing { width: 180px; height: 180px; } 
-      .intro-text { width: 220px; height: 80px; margin-top: -20px; }
+      .intro-text { width: 240px; height: 120px; margin-top: -45px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- 🔘 テーマ切り替えトグル -->
   <div class="theme-switch-wrapper">
     <label class="theme-switch">
       <input type="checkbox" id="theme-toggle">
@@ -205,7 +179,6 @@
     </div>
   </div>
 
-  <!-- 🏷 ヘッダー -->
   <header>
     <div class="header-left">
       <img src="Flyhigh_logo.png" alt="Logo" class="header-logo">
@@ -219,7 +192,6 @@
     </div>
   </header>
 
-  <!-- 📄 ランキング画面 (メイン) -->
   <main id="view-ranking">
     <div class="search-bar">
       <input type="text" placeholder="プレイヤー名で検索 (例: てすぬー)">
@@ -237,19 +209,16 @@
     </div>
   </main>
 
-  <!-- ⚙️ シード設定画面 (初期状態では非表示) -->
   <main id="view-settings" class="hidden">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
       <h2>シード設定</h2>
       <button id="btn-close-settings" class="btn-settings">◀ ランキングに戻る</button>
     </div>
-    
     <div class="ranking-card" style="flex-direction: column; align-items: flex-start; gap: 15px;">
       <h3 style="color: var(--primary-color);">認証および設定システム (準備中)</h3>
       <p style="color: var(--text-muted); line-height: 1.6;">
         今後のアップデートにて、MTPRと同等の認証ロジックと<br>大会シード作成用のパラメータ調整UIを実装予定です。
       </p>
-      
       <div style="width: 100%; height: 150px; border: 2px dashed var(--border-color); display: flex; justify-content: center; align-items: center; border-radius: 8px; color: var(--border-color); font-weight: bold;">
         System Building...
       </div>
@@ -257,7 +226,6 @@
   </main>
 
   <script>
-    // --- テーマ設定ロジック ---
     const themeToggle = document.getElementById('theme-toggle');
     const htmlEl = document.documentElement;
     if (htmlEl.getAttribute('data-theme') === 'light') themeToggle.checked = true;
@@ -274,7 +242,6 @@
       setThemeCookie(newTheme);
     });
 
-    // --- オープニングアニメーション ---
     window.addEventListener('load', () => {
       const introScreen = document.getElementById('intro-screen');
       setTimeout(() => {
@@ -282,7 +249,6 @@
       }, 2500); 
     });
 
-    // --- 画面切り替えロジック (ランキング ⇔ シード設定) ---
     const viewRanking = document.getElementById('view-ranking');
     const viewSettings = document.getElementById('view-settings');
     const btnOpenSettings = document.getElementById('btn-open-settings');
