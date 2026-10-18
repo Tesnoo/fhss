@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-width=1.0">
   <title>FHSP - Seeding & Ranking</title>
+  <script>
+    // 💡 画面描画の前にCookieを読み込み、テーマのチラつきを防ぐ
+    function getThemeCookie() {
+      const match = document.cookie.match(new RegExp('(^| )fhsp_theme=([^;]+)'));
+      return match ? match[2] : 'dark'; // デフォルトはダーク
+    }
+    document.documentElement.setAttribute('data-theme', getThemeCookie());
+  </script>
   <style>
     /* 🎨 カラーテーマ */
     :root {
@@ -14,9 +22,7 @@
       --text-muted: #aaaaaa;
       --border-color: #333333;
       --transition-speed: 0.3s;
-      
-      /* アニメーション用の変数 */
-      --intro-text-img: url('flyhigh_text_white.png'); /* ダークモード時の文字画像 */
+      --intro-text-img: url('flyhigh_text_white.png'); 
     }
 
     [data-theme="light"] {
@@ -25,8 +31,7 @@
       --text-main: #1a1a1a;
       --text-muted: #666666;
       --border-color: #e1e4e8;
-      
-      --intro-text-img: url('flyhigh_text_black.png'); /* ライトモード時の文字画像 */
+      --intro-text-img: url('flyhigh_text_black.png'); 
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,6 +41,58 @@
       color: var(--text-main);
       transition: background-color var(--transition-speed), color var(--transition-speed);
       overflow-x: hidden;
+    }
+
+    /* 🔘 トグルスイッチ（画面最前面に固定配置） */
+    .theme-switch-wrapper {
+      position: fixed;
+      top: 1.2rem;
+      right: 2rem;
+      z-index: 10000; /* ロード画面(9999)よりも上に配置 */
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .theme-switch {
+      position: relative;
+      display: inline-block;
+      width: 54px;
+      height: 28px;
+    }
+    .theme-switch input { opacity: 0; width: 0; height: 0; }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #333;
+      transition: .3s;
+      border-radius: 34px;
+      border: 1px solid #555;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "🌙";
+      font-size: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 22px;
+      width: 22px;
+      left: 2px;
+      bottom: 2px;
+      background-color: #1e1e1e;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider { background-color: #e1e4e8; border-color: #ccc; }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+      content: "☀️";
+      background-color: #ffffff;
     }
 
     /* ✨ オープニングトランジション画面 */
@@ -50,13 +107,12 @@
       transition: opacity 0.8s ease, visibility 0.8s ease;
     }
 
-    /* 羽と文字を縦並びに配置するためのコンテナ */
     .intro-container {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 30px; /* 羽と文字の隙間 */
+      gap: 0; /* 余白をゼロに */
       perspective: 1000px;
     }
 
@@ -67,12 +123,9 @@
       background-image: url('Flyhigh_logo.png');
       background-size: contain;
       background-repeat: no-repeat;
-      background-position: center;
+      background-position: bottom center; /* 下揃えにして文字に近づける */
       transform-origin: center;
-      
-      animation: 
-        floatWing 1.5s ease-in-out infinite alternate,
-        wingFlyAway 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) 1.5s forwards;
+      animation: floatWing 1.5s ease-in-out infinite alternate, wingFlyAway 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) 1.5s forwards;
     }
     
     @keyframes floatWing {
@@ -88,13 +141,13 @@
 
     /* ✒️ 文字のアニメーション */
     .intro-text {
-      width: 700px;  /* 500pxからさらに拡大 */
-      height: 200px; /* 150pxからさらに拡大 */
+      width: 770px;  /* 1.1倍に拡大 */
+      height: 150px; 
+      margin-top: -30px; /* ネガティブマージンで羽に近づける */
       background-image: var(--intro-text-img);
       background-size: contain;
       background-repeat: no-repeat;
-      background-position: center center;
-      
+      background-position: top center; /* 上揃えにして羽に近づける */
       animation: textSlideInOut 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
 
@@ -105,11 +158,7 @@
       100% { transform: translateX(100vw); opacity: 0; }
     }
 
-    .intro-hidden {
-      opacity: 0 !important;
-      visibility: hidden !important;
-      pointer-events: none;
-    }
+    .intro-hidden { opacity: 0 !important; visibility: hidden !important; pointer-events: none; }
 
     /* 📱 ヘッダーとメインコンテンツ */
     header {
@@ -120,12 +169,10 @@
       background-color: var(--card-bg);
       border-bottom: 1px solid var(--border-color);
       transition: background-color var(--transition-speed);
+      height: 70px; /* トグルスイッチに合わせた高さ固定 */
     }
     .header-title { font-size: 1.5rem; font-weight: 900; }
     .header-title span { color: var(--primary-color); }
-    
-    .theme-toggle-btn { background: none; border: 1px solid var(--border-color); color: var(--text-main); padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-size: 0.9rem; font-weight: bold; transition: all 0.2s; }
-    .theme-toggle-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
     
     main { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
     .search-bar { display: flex; gap: 10px; margin-bottom: 2rem; }
@@ -142,13 +189,26 @@
     /* スマホ画面でのサイズ調整 */
     @media (max-width: 600px) { 
       header { padding: 1rem; } 
+      .theme-switch-wrapper { right: 1rem; top: 1rem; }
       .search-bar { flex-direction: column; } 
       .intro-wing { width: 180px; height: 180px; } 
-      .intro-text { width: 350px; height: 110px; }  /* スマホ用文字サイズも拡大 */
+      .intro-text { 
+        width: 385px;  /* 1.1倍に拡大 */
+        height: 80px; 
+        margin-top: -20px; /* スマホでもロゴに近づける */
+      }
     }
   </style>
 </head>
 <body>
+
+  <!-- 🔘 テーマ切り替えトグル -->
+  <div class="theme-switch-wrapper">
+    <label class="theme-switch">
+      <input type="checkbox" id="theme-toggle">
+      <span class="slider"></span>
+    </label>
+  </div>
 
   <div id="intro-screen">
     <div class="intro-container">
@@ -159,7 +219,7 @@
 
   <header>
     <div class="header-title"><span>F</span>HSP</div>
-    <button class="theme-toggle-btn" id="theme-btn">☀️ Light Mode</button>
+    <!-- ヘッダー右側はトグルボタンがFixedで乗るため空けておきます -->
   </header>
 
   <main>
@@ -180,25 +240,35 @@
   </main>
 
   <script>
+    // --- トグルボタンの初期状態セット ---
+    const themeToggle = document.getElementById('theme-toggle');
+    const htmlEl = document.documentElement;
+    
+    // Cookieのロードは <head> 内で完了しているため、それに合わせてスイッチの位置を変える
+    if (htmlEl.getAttribute('data-theme') === 'light') {
+      themeToggle.checked = true;
+    }
+
+    // --- 30日間のCookie保存機能 ---
+    function setThemeCookie(themeName) {
+      const d = new Date();
+      d.setTime(d.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30日
+      document.cookie = "fhsp_theme=" + themeName + ";expires=" + d.toUTCString() + ";path=/";
+    }
+
+    // --- トグル操作時のイベント ---
+    themeToggle.addEventListener('change', (e) => {
+      const newTheme = e.target.checked ? 'light' : 'dark';
+      htmlEl.setAttribute('data-theme', newTheme);
+      setThemeCookie(newTheme);
+    });
+
+    // --- オープニング終了 ---
     window.addEventListener('load', () => {
       const introScreen = document.getElementById('intro-screen');
       setTimeout(() => {
         introScreen.classList.add('intro-hidden');
       }, 2500); 
-    });
-
-    const themeBtn = document.getElementById('theme-btn');
-    const htmlEl = document.documentElement;
-
-    themeBtn.addEventListener('click', () => {
-      const currentTheme = htmlEl.getAttribute('data-theme');
-      if (currentTheme === 'dark') {
-        htmlEl.setAttribute('data-theme', 'light');
-        themeBtn.textContent = '🌙 Dark Mode';
-      } else {
-        htmlEl.setAttribute('data-theme', 'dark');
-        themeBtn.textContent = '☀️ Light Mode';
-      }
     });
   </script>
 </body>
