@@ -36,8 +36,10 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    /* 📌 【改善】日英のフォントの馴染みを良くするため、最新のシステムフォントスタックを適用 */
     body {
-      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
       overflow-x: hidden;
@@ -82,8 +84,11 @@
 
     /* ⏳ ローディングテキスト */
     .loading-text {
-      color: var(--text-muted); font-size: 1.3rem; font-weight: bold; letter-spacing: 0.1em; /* 📌 サイズアップ */
-      margin-top: -10px; display: flex; align-items: flex-end; gap: 2px;
+      color: var(--text-muted); 
+      /* 📌 【改善】Now Loadingをさらに大きく */
+      font-size: 1.6rem; 
+      font-weight: bold; letter-spacing: 0.1em;
+      margin-top: 0px; display: flex; align-items: flex-end; gap: 2px;
       transition: opacity 0.4s ease;
     }
     .loading-dots { display: inline-flex; }
@@ -133,8 +138,6 @@
       background-color: var(--card-bg); color: var(--text-main); font-size: 1rem; outline: none; 
     }
     .search-bar input:focus { border-color: var(--primary-color); }
-    
-    /* 📌 プレースホルダーの文字サイズを調整 */
     .search-bar input::placeholder { font-size: 0.95rem; }
     
     .player-count-header { margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem; display: flex; justify-content: flex-end; font-weight: bold; }
@@ -147,13 +150,18 @@
     .ranking-card:hover { border-color: var(--primary-color); }
     
     .rank-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-    .rank-num { font-size: 1rem; font-weight: bold; color: var(--primary-color); }
-    .rank-name { font-size: 1.4rem; font-weight: 900; word-break: break-all; }
+    
+    /* 📌 【改善】ランキングの順位を少し大きく */
+    .rank-num { font-size: 1.25rem; font-weight: bold; color: var(--primary-color); }
+    
+    /* 📌 【改善】日本語と英語の太さを均一化するために 800 (Extra Bold) を指定 */
+    .rank-name { font-size: 1.4rem; font-weight: 800; word-break: break-all; }
     
     .rank-score-area { text-align: right; }
-    /* 📌 スコアの数字をオレンジに変更 */
+    
+    /* 📌 【改善】Scoreラベルを上に配置するための調整 */
+    .rank-score-label { font-size: 0.75rem; color: var(--text-muted); font-weight: bold; margin-bottom: 2px; letter-spacing: 0.05em; }
     .rank-score { font-size: 1.8rem; font-weight: 900; color: var(--primary-color); line-height: 1; }
-    .rank-score-label { font-size: 0.7rem; color: var(--text-muted); font-weight: bold; margin-top: 4px; letter-spacing: 0.05em; }
     
     /* 📄 ページネーション */
     .pagination-controls { display: flex; justify-content: center; align-items: center; gap: 15px; margin: 2rem 0; }
@@ -177,14 +185,18 @@
       .btn-settings { padding: 0.5rem; }
       
       .search-bar { flex-direction: column; margin-bottom: 1.5rem; } 
-      /* 📌 スマホ表示時のプレースホルダーを見切れないように縮小 */
       .search-bar input::placeholder { font-size: 0.75rem; }
       
       .intro-wing { width: 180px; height: 180px; } 
       .intro-text { width: 240px; height: 120px; margin-top: -35px; }
-      .loading-text { font-size: 1.1rem; margin-top: -5px; } /* 📌 スマホ用も少しサイズアップ */
+      
+      /* 📌 【改善】スマホ用のNow Loadingも大きく */
+      .loading-text { font-size: 1.3rem; margin-top: -5px; } 
       
       .ranking-card { padding: 1rem; }
+      
+      /* 📌 スマホ用の順位と名前サイズ */
+      .rank-num { font-size: 1.1rem; }
       .rank-name { font-size: 1.2rem; }
       .rank-score { font-size: 1.4rem; }
       .btn-page { padding: 0.5rem 1rem; }
@@ -296,7 +308,7 @@
     let currentPage = 1;
     const ITEMS_PER_PAGE = 30;
 
-    // 📌 英語の序数(1st, 2nd, 3rd, 4th...)を生成する関数
+    // 英語の序数を生成する関数
     function getOrdinal(n) {
       const s = ["th", "st", "nd", "rd"];
       const v = n % 100;
@@ -316,16 +328,16 @@
       }
 
       paginatedItems.forEach(p => {
+        // 📌 【改善】HTML構造を変更し、Score文字を数字の上に配置
         const cardHTML = `
           <div class="ranking-card">
             <div class="rank-info">
-              <!-- 📌 序数変換関数を適用 -->
               <div class="rank-num">${getOrdinal(p.rank)}</div>
               <div class="rank-name">${p.tag}</div>
             </div>
             <div class="rank-score-area">
+              <div class="rank-score-label">Score</div>
               <div class="rank-score">${Math.floor(p.score).toLocaleString()}</div>
-              <div class="rank-score-label">FHSP</div>
             </div>
           </div>
         `;
@@ -362,7 +374,7 @@
       renderPage(currentPage);
     });
 
-    // 🚀 アニメーションとAPI通信の同期システム
+    // アニメーションとAPI通信の同期システム
     window.addEventListener('DOMContentLoaded', async () => {
       const introScreen = document.getElementById('intro-screen');
       const minDelay = new Promise(resolve => setTimeout(resolve, 1500));
