@@ -8,7 +8,6 @@
   <link rel="icon" href="Flyhigh_logo.png" type="image/png">
   
   <script>
-    // 💡 ロード前にCookieを読んでテーマを即時適用（チラつき防止）
     function getThemeCookie() {
       const match = document.cookie.match(new RegExp('(^| )fhsp_theme=([^;]+)'));
       return match ? match[2] : 'dark';
@@ -36,7 +35,6 @@
       --intro-text-img: url('flyhigh_text_black.png'); 
     }
 
-    /* 📌 【改善】transitionを削除し、テーマ切り替え時の強烈なラグを解消 */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
@@ -60,26 +58,65 @@
     input:checked + .slider { background-color: #e1e4e8; border-color: #ccc; }
     input:checked + .slider:before { transform: translateX(26px); content: "☀️"; background-color: #ffffff; }
 
-    /* ✨ オープニング */
+    /* ✨ オープニング画面 */
     #intro-screen {
       position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
       background-color: var(--bg-color); display: flex; justify-content: center;
       align-items: center; z-index: 9999; transition: opacity 0.5s ease, visibility 0.5s ease;
     }
     .intro-container { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0; perspective: 1000px; }
+    
+    /* 🪽 ロゴ（羽） */
     .intro-wing {
       width: 250px; height: 250px; background-image: url('Flyhigh_logo.png');
       background-size: contain; background-repeat: no-repeat; background-position: bottom center; 
-      transform-origin: center; animation: floatWing 1.5s ease-in-out infinite alternate, wingFlyAway 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) 1.5s forwards;
+      transform-origin: center; 
+      /* 📌 ロード中は無限に揺れ続ける */
+      animation: floatWing 1.5s ease-in-out infinite alternate; 
     }
     @keyframes floatWing { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-5px) rotate(2deg); } }
-    @keyframes wingFlyAway { 0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; } 20% { transform: translate(10px, 10px) scale(0.9) rotate(-10deg); opacity: 1; } 100% { transform: translate(-100vw, -100vh) scale(0.5) rotate(45deg); opacity: 0; } }
+    
+    /* ✒️ 文字 */
     .intro-text {
       width: 320px; height: 160px; background-position: center center; background-image: var(--intro-text-img);
       background-size: 100% auto; background-repeat: no-repeat; margin-top: -45px; 
-      animation: textSlideInOut 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+      /* 📌 左からスライドインして、定位置で待機 */
+      animation: textSlideIn 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
     }
-    @keyframes textSlideInOut { 0% { transform: translateX(-50vw); opacity: 0; } 20% { transform: translateX(0); opacity: 1; } 60% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(100vw); opacity: 0; } }
+    @keyframes textSlideIn { 0% { transform: translateX(-50vw); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
+
+    /* ⏳ ローディングテキスト (Now Loading...) */
+    .loading-text {
+      color: var(--text-muted); font-size: 1rem; font-weight: bold; letter-spacing: 0.1em;
+      margin-top: -20px; display: flex; align-items: flex-end; gap: 2px;
+      transition: opacity 0.4s ease;
+    }
+    .loading-dots { display: inline-flex; }
+    /* 📌 3点リーダーが波打つように跳ねる */
+    .loading-dots span { animation: loadingBounce 1.4s infinite ease-in-out both; }
+    .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes loadingBounce {
+      0%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-6px); }
+    }
+
+    /* 🚀 【データ取得完了時】付与されるクラスによる変化 */
+    .fly-away .intro-wing {
+      /* 羽ばたいて飛んでいく */
+      animation: wingFlyAway 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards; 
+    }
+    .fly-away .intro-text {
+      /* 右へスライドアウト */
+      animation: textSlideOut 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
+    }
+    .fly-away .loading-text {
+      /* ロード文字はスッと消える */
+      opacity: 0; 
+    }
+    @keyframes wingFlyAway { 0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; } 20% { transform: translate(10px, 10px) scale(0.9) rotate(-10deg); opacity: 1; } 100% { transform: translate(-100vw, -100vh) scale(0.5) rotate(45deg); opacity: 0; } }
+    @keyframes textSlideOut { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(100vw); opacity: 0; } }
+
     .intro-hidden { opacity: 0 !important; visibility: hidden !important; pointer-events: none; }
 
     /* 📱 ヘッダー */
@@ -106,28 +143,21 @@
     /* 📄 メインコンテンツ領域 */
     main { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
     .search-bar { display: flex; gap: 10px; margin-bottom: 2rem; }
-    
-    /* 📌 検索ボックス */
     .search-bar input { 
       flex: 1; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); 
       background-color: var(--card-bg); color: var(--text-main); font-size: 1rem; outline: none; 
     }
     .search-bar input:focus { border-color: var(--primary-color); }
     
-    .player-count-header {
-      margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem; 
-      display: flex; justify-content: flex-end; font-weight: bold;
-    }
+    .player-count-header { margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem; display: flex; justify-content: flex-end; font-weight: bold; }
     
     /* 🏆 ランキングカード */
     .ranking-card {
       background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px;
       padding: 1.2rem 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;
-      /* 📌 【改善】ホバー時のラグの原因だった box-shadow と transform の transition を削除 */
     }
     .ranking-card:hover { border-color: var(--primary-color); }
     
-    /* 📌 【改善】順位とGamerTagを縦並び（2段組）に変更し、4桁順位の衝突を回避 */
     .rank-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
     .rank-num { font-size: 1rem; font-weight: bold; color: var(--primary-color); }
     .rank-name { font-size: 1.4rem; font-weight: 900; word-break: break-all; }
@@ -137,13 +167,8 @@
     .rank-score-label { font-size: 0.7rem; color: var(--text-muted); font-weight: bold; margin-top: 4px; letter-spacing: 0.05em; }
     
     /* 📄 ページネーション */
-    .pagination-controls {
-      display: flex; justify-content: center; align-items: center; gap: 15px; margin: 2rem 0;
-    }
-    .btn-page {
-      background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);
-      padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: bold; cursor: pointer;
-    }
+    .pagination-controls { display: flex; justify-content: center; align-items: center; gap: 15px; margin: 2rem 0; }
+    .btn-page { background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: bold; cursor: pointer; }
     .btn-page:hover:not(:disabled) { border-color: var(--primary-color); color: var(--primary-color); }
     .btn-page:disabled { opacity: 0.4; cursor: not-allowed; }
     .page-info { font-weight: bold; color: var(--text-main); font-size: 1.1rem; }
@@ -165,6 +190,7 @@
       .search-bar { flex-direction: column; margin-bottom: 1.5rem; } 
       .intro-wing { width: 180px; height: 180px; } 
       .intro-text { width: 240px; height: 120px; margin-top: -35px; }
+      .loading-text { font-size: 0.85rem; margin-top: -15px; }
       
       .ranking-card { padding: 1rem; }
       .rank-name { font-size: 1.2rem; }
@@ -180,6 +206,11 @@
     <div class="intro-container">
       <div class="intro-wing"></div>
       <div class="intro-text"></div>
+      <!-- ⏳ 追加：ローディングアニメーション文字 -->
+      <div class="loading-text">
+        Now Loading
+        <div class="loading-dots"><span>.</span><span>.</span><span>.</span></div>
+      </div>
     </div>
   </div>
 
@@ -205,18 +236,15 @@
   <!-- 📄 ランキング画面 -->
   <main id="view-ranking">
     <div class="search-bar">
-      <!-- 📌 検索プレースホルダーの変更 -->
       <input type="text" id="search-input" placeholder="🔎｜start.gg登録名 または Discriminator で検索">
     </div>
     
-    <!-- 📌 「TOKYO / SEEDING RANKING」を削除し、右寄せの人数のみに -->
     <div class="player-count-header">
       <span id="player-count">0 Players</span>
     </div>
     
     <div id="ranking-list"></div>
     
-    <!-- 📌 ページネーション領域 -->
     <div id="pagination-controls" class="pagination-controls"></div>
   </main>
 
@@ -277,12 +305,10 @@
     let allPlayerData = [];
     let filteredData = [];
     let currentPage = 1;
-    const ITEMS_PER_PAGE = 30; // 📌 1ページ30人
+    const ITEMS_PER_PAGE = 30;
 
-    // 📌 ページ描画関数
     function renderPage(page) {
       rankingList.innerHTML = ""; 
-      
       const startIndex = (page - 1) * ITEMS_PER_PAGE;
       const endIndex = startIndex + ITEMS_PER_PAGE;
       const paginatedItems = filteredData.slice(startIndex, endIndex);
@@ -294,7 +320,6 @@
       }
 
       paginatedItems.forEach(p => {
-        // 📌 順位と名前を2段組にし、勝率・SPRを一旦非表示に
         const cardHTML = `
           <div class="ranking-card">
             <div class="rank-info">
@@ -309,17 +334,12 @@
         `;
         rankingList.insertAdjacentHTML('beforeend', cardHTML);
       });
-
       renderPaginationControls();
     }
 
-    // 📌 ページネーションUI生成
     function renderPaginationControls() {
       const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
-      if (totalPages <= 1) {
-        paginationControls.innerHTML = "";
-        return;
-      }
+      if (totalPages <= 1) { paginationControls.innerHTML = ""; return; }
 
       const prevDisabled = currentPage === 1 ? "disabled" : "";
       const nextDisabled = currentPage === totalPages ? "disabled" : "";
@@ -331,33 +351,28 @@
       `;
     }
 
-    // 📌 ページ遷移アクション
     window.changePage = function(newPage) {
       currentPage = newPage;
       renderPage(currentPage);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // 📌 検索機能 (Discriminatorも含めて検索可能)
     searchInput.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase().trim();
-      filteredData = allPlayerData.filter(p => {
-        // ※ 今後GAS側からDiscriminatorが飛んできたらここで結合して検索対象にできます
-        return p.tag.toLowerCase().includes(query);
-      });
+      filteredData = allPlayerData.filter(p => p.tag.toLowerCase().includes(query));
       currentPage = 1;
       playerCount.textContent = `${filteredData.length} Players`;
       renderPage(currentPage);
     });
 
-    // 📌 【改善】アニメーションとAPI通信の同期
+    // 🚀 アニメーションとAPI通信の同期システム
     window.addEventListener('DOMContentLoaded', async () => {
       const introScreen = document.getElementById('intro-screen');
       
-      // ① 最低でも2.5秒間はオープニングアニメーションを見せるためのタイマー
-      const minDelay = new Promise(resolve => setTimeout(resolve, 2500));
+      // ① 通信が爆速で終わった場合でも、オープニングを最低1.5秒は魅せるためのタイマー
+      const minDelay = new Promise(resolve => setTimeout(resolve, 1500));
       
-      // ② データのフェッチ処理
+      // ② データフェッチ処理
       const fetchData = fetch(API_URL)
         .then(res => res.json())
         .then(data => {
@@ -367,20 +382,24 @@
         })
         .catch(err => {
           console.error(err);
+          // 失敗した場合はエラー表示
           rankingList.innerHTML = `<div class="no-results" style="color: #f87171;">エラー: データの取得に失敗しました。<br>通信環境を確認してください。</div>`;
         });
 
-      // ③ アニメーション時間(2.5s) と データ取得 の両方が完了するまで待機する
+      // ③ アニメーション確保時間 と データ取得 の両方が完了するまで待機
       await Promise.all([minDelay, fetchData]);
       
-      // ④ 両方完了した瞬間にロード画面を消す
-      introScreen.classList.add('intro-hidden');
+      // ④ 準備完了の合図（.fly-away クラスを付与）→ 羽ばたきアニメーションが発火
+      introScreen.classList.add('fly-away');
       
-      // ⑤ 初回描画を実行
-      if (allPlayerData.length > 0) {
-        playerCount.textContent = `${allPlayerData.length} Players`;
-        renderPage(1);
-      }
+      // ⑤ 飛翔アニメーションの長さ（約1秒）を待ってから、ローディング画面を消去＆リスト描画
+      setTimeout(() => {
+        introScreen.classList.add('intro-hidden');
+        if (allPlayerData.length > 0) {
+          playerCount.textContent = `${allPlayerData.length} Players`;
+          renderPage(1);
+        }
+      }, 1000); 
     });
   </script>
 </body>
