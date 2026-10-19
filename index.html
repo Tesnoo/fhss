@@ -123,10 +123,9 @@
     .rank-details { display: flex; flex-direction: column; gap: 4px; }
     .rank-name { font-size: 1.3rem; font-weight: bold; }
     
-    /* 追加したデータ(勝率・SPR)を表示するサブエリア */
     .rank-stats { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-muted); font-weight: bold; }
-    .stat-positive { color: #4ade80; } /* SPR上振れ時の色 */
-    .stat-negative { color: #f87171; } /* SPR下振れ時の色 */
+    .stat-positive { color: #4ade80; } 
+    .stat-negative { color: #f87171; } 
     
     .rank-score-area { text-align: right; }
     .rank-score { font-size: 1.8rem; font-weight: 900; color: var(--primary-color); line-height: 1; }
@@ -150,7 +149,6 @@
       .intro-wing { width: 180px; height: 180px; } 
       .intro-text { width: 240px; height: 120px; margin-top: -35px; }
       
-      /* スマホ用カード調整 */
       .ranking-card { padding: 1rem; }
       .rank-info { gap: 12px; }
       .rank-num { font-size: 1.5rem; width: 30px; }
@@ -162,7 +160,6 @@
 </head>
 <body>
 
-  <!-- ✨ オープニングトランジション画面 -->
   <div id="intro-screen">
     <div class="intro-container">
       <div class="intro-wing"></div>
@@ -170,7 +167,6 @@
     </div>
   </div>
 
-  <!-- 🏷 ヘッダー -->
   <header>
     <div class="header-left">
       <img src="Flyhigh_logo.png" alt="Logo" class="header-logo">
@@ -189,7 +185,6 @@
     </div>
   </header>
 
-  <!-- 📄 ランキング画面 (メイン) -->
   <main id="view-ranking">
     <div class="search-bar">
       <input type="text" id="search-input" placeholder="プレイヤー名で検索 (例: てすぬー)">
@@ -199,11 +194,9 @@
       <span id="player-count">0 Players</span>
     </div>
     
-    <!-- ランキングリストがここに入ります -->
     <div id="ranking-list"></div>
   </main>
 
-  <!-- ⚙️ シード設定画面 -->
   <main id="view-settings" class="hidden">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
       <h2>シード設定</h2>
@@ -225,7 +218,6 @@
   </main>
 
   <script>
-    // --- 🎨 テーマ切り替えロジック ---
     const themeToggle = document.getElementById('theme-toggle');
     const htmlEl = document.documentElement;
     if (htmlEl.getAttribute('data-theme') === 'light') themeToggle.checked = true;
@@ -241,13 +233,11 @@
       setThemeCookie(newTheme);
     });
 
-    // --- 🎬 オープニング ---
     window.addEventListener('load', () => {
       const introScreen = document.getElementById('intro-screen');
       setTimeout(() => { introScreen.classList.add('intro-hidden'); }, 2500); 
     });
 
-    // --- 🔀 画面切り替え ---
     document.getElementById('btn-open-settings').addEventListener('click', () => {
       document.getElementById('view-ranking').classList.add('hidden');
       document.getElementById('view-settings').classList.remove('hidden');
@@ -261,24 +251,17 @@
     // 📊 データレンダリング・検索システム
     // =========================================================================
     
-    // ※今後、GASから取得するJSONデータの構造イメージ（モックデータ）
-    const mockData = [
-      { rank: 1, tag: "てすぬー", score: 18450.5, winRate: 0.725, avgSpr: 1.5 },
-      { rank: 2, tag: "Player A", score: 15200.0, winRate: 0.680, avgSpr: 0.8 },
-      { rank: 3, tag: "Player B", score: 14850.2, winRate: 0.665, avgSpr: 1.2 },
-      { rank: 4, tag: "Player C", score: 12100.0, winRate: 0.610, avgSpr: -0.5 },
-      { rank: 5, tag: "スマブラ太郎", score: 9800.8, winRate: 0.550, avgSpr: 0.0 },
-      { rank: 6, tag: "Player D", score: 8500.0, winRate: 0.510, avgSpr: -1.2 },
-      { rank: 7, tag: "Player E", score: 7200.4, winRate: 0.490, avgSpr: 0.3 }
-    ];
-
+    // ユーザー提供のAPI URL
+    const API_URL = "https://script.google.com/macros/s/AKfycby9WYK7CP3dUE8E9bdppk35w-k96ahekGS1oDmKIzoHDZnHq9kyLdKtnS7kQZoigQBB/exec";
+    
     const rankingList = document.getElementById('ranking-list');
     const searchInput = document.getElementById('search-input');
     const playerCount = document.getElementById('player-count');
+    
+    let allPlayerData = [];
 
-    // プレイヤーを描画する関数
     function renderPlayers(players) {
-      rankingList.innerHTML = ""; // 一旦リセット
+      rankingList.innerHTML = ""; 
       playerCount.textContent = `${players.length} Players`;
 
       if (players.length === 0) {
@@ -287,10 +270,8 @@
       }
 
       players.forEach(p => {
-        // 勝率の％表示 (例: 0.725 -> 72.5%)
         const winRateDisplay = (p.winRate * 100).toFixed(1) + "%";
         
-        // SPRの装飾 (プラスなら緑、マイナスなら赤)
         let sprDisplay = "";
         let sprClass = "";
         if (p.avgSpr > 0) {
@@ -303,7 +284,6 @@
           sprDisplay = "±0";
         }
 
-        // HTMLを生成
         const cardHTML = `
           <div class="ranking-card">
             <div class="rank-info">
@@ -326,20 +306,33 @@
       });
     }
 
-    // 初回レンダリング
-    renderPlayers(mockData);
+    async function loadRankingData() {
+      rankingList.innerHTML = `<div class="no-results">最新のデータベースと同期中... ⏳</div>`;
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+        
+        if (data.error) {
+          rankingList.innerHTML = `<div class="no-results" style="color: #f87171;">エラー: ${data.error}</div>`;
+          return;
+        }
+        
+        allPlayerData = data;
+        renderPlayers(allPlayerData);
+        
+      } catch (error) {
+        rankingList.innerHTML = `<div class="no-results" style="color: #f87171;">データの取得に失敗しました。<br>通信環境を確認するか、GASのデプロイ設定(アクセスできるユーザー: 全員)を確認してください。</div>`;
+        console.error("Fetch error:", error);
+      }
+    }
 
-    // 検索機能のイベントリスナー（入力するたびに即時フィルタリング）
     searchInput.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase().trim();
-      
-      const filtered = mockData.filter(p => {
-        // tag (プレイヤー名) に検索文字が含まれているかチェック
-        return p.tag.toLowerCase().includes(query);
-      });
-      
+      const filtered = allPlayerData.filter(p => p.tag.toLowerCase().includes(query));
       renderPlayers(filtered);
     });
+
+    window.addEventListener('DOMContentLoaded', loadRankingData);
   </script>
 </body>
 </html>
