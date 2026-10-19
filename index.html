@@ -8,6 +8,7 @@
   <link rel="icon" href="Flyhigh_logo.png" type="image/png">
   
   <script>
+    // 💡 ロード前にCookieを読んでテーマを即時適用（チラつき防止）
     function getThemeCookie() {
       const match = document.cookie.match(new RegExp('(^| )fhsp_theme=([^;]+)'));
       return match ? match[2] : 'dark';
@@ -23,7 +24,6 @@
       --text-main: #ffffff;
       --text-muted: #aaaaaa;
       --border-color: #333333;
-      --transition-speed: 0.3s;
       --intro-text-img: url('flyhigh_text_white.png'); 
     }
 
@@ -36,12 +36,12 @@
       --intro-text-img: url('flyhigh_text_black.png'); 
     }
 
+    /* 📌 【改善】transitionを削除し、テーマ切り替え時の強烈なラグを解消 */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
       background-color: var(--bg-color);
       color: var(--text-main);
-      transition: background-color var(--transition-speed), color var(--transition-speed);
       overflow-x: hidden;
     }
 
@@ -50,12 +50,12 @@
     .theme-switch input { opacity: 0; width: 0; height: 0; }
     .slider {
       position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-      background-color: #333; transition: .3s; border-radius: 34px; border: 1px solid #555;
+      background-color: #333; border-radius: 34px; border: 1px solid #555;
     }
     .slider:before {
       position: absolute; content: "🌙"; font-size: 14px; display: flex; justify-content: center;
       align-items: center; height: 22px; width: 22px; left: 2px; bottom: 2px;
-      background-color: #1e1e1e; transition: .3s; border-radius: 50%;
+      background-color: #1e1e1e; transition: transform 0.2s; border-radius: 50%;
     }
     input:checked + .slider { background-color: #e1e4e8; border-color: #ccc; }
     input:checked + .slider:before { transform: translateX(26px); content: "☀️"; background-color: #ffffff; }
@@ -64,7 +64,7 @@
     #intro-screen {
       position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
       background-color: var(--bg-color); display: flex; justify-content: center;
-      align-items: center; z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s ease;
+      align-items: center; z-index: 9999; transition: opacity 0.5s ease, visibility 0.5s ease;
     }
     .intro-container { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0; perspective: 1000px; }
     .intro-wing {
@@ -99,38 +99,55 @@
     .btn-settings {
       background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);
       padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: bold;
-      cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 5px;
+      cursor: pointer; display: flex; align-items: center; gap: 5px;
     }
     .btn-settings:hover { border-color: var(--primary-color); color: var(--primary-color); }
 
     /* 📄 メインコンテンツ領域 */
     main { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
     .search-bar { display: flex; gap: 10px; margin-bottom: 2rem; }
-    .search-bar input { flex: 1; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-main); font-size: 1rem; outline: none; transition: border-color 0.2s; }
+    
+    /* 📌 検索ボックス */
+    .search-bar input { 
+      flex: 1; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); 
+      background-color: var(--card-bg); color: var(--text-main); font-size: 1rem; outline: none; 
+    }
     .search-bar input:focus { border-color: var(--primary-color); }
     
-    /* 🏆 ランキングカードの拡張 */
+    .player-count-header {
+      margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem; 
+      display: flex; justify-content: flex-end; font-weight: bold;
+    }
+    
+    /* 🏆 ランキングカード */
     .ranking-card {
       background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px;
       padding: 1.2rem 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;
-      transition: transform 0.2s, box-shadow 0.2s;
+      /* 📌 【改善】ホバー時のラグの原因だった box-shadow と transform の transition を削除 */
     }
-    .ranking-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(250, 133, 52, 0.15); border-color: var(--primary-color); }
+    .ranking-card:hover { border-color: var(--primary-color); }
     
-    .rank-info { display: flex; align-items: center; gap: 20px; flex: 1; }
-    .rank-num { font-size: 1.8rem; font-weight: 900; color: var(--text-muted); width: 45px; text-align: center; }
-    
-    .rank-details { display: flex; flex-direction: column; gap: 4px; }
-    .rank-name { font-size: 1.3rem; font-weight: bold; }
-    
-    .rank-stats { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-muted); font-weight: bold; }
-    .stat-positive { color: #4ade80; } 
-    .stat-negative { color: #f87171; } 
+    /* 📌 【改善】順位とGamerTagを縦並び（2段組）に変更し、4桁順位の衝突を回避 */
+    .rank-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+    .rank-num { font-size: 1rem; font-weight: bold; color: var(--primary-color); }
+    .rank-name { font-size: 1.4rem; font-weight: 900; word-break: break-all; }
     
     .rank-score-area { text-align: right; }
-    .rank-score { font-size: 1.8rem; font-weight: 900; color: var(--primary-color); line-height: 1; }
+    .rank-score { font-size: 1.8rem; font-weight: 900; color: var(--text-main); line-height: 1; }
     .rank-score-label { font-size: 0.7rem; color: var(--text-muted); font-weight: bold; margin-top: 4px; letter-spacing: 0.05em; }
     
+    /* 📄 ページネーション */
+    .pagination-controls {
+      display: flex; justify-content: center; align-items: center; gap: 15px; margin: 2rem 0;
+    }
+    .btn-page {
+      background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color);
+      padding: 0.6rem 1.5rem; border-radius: 8px; font-weight: bold; cursor: pointer;
+    }
+    .btn-page:hover:not(:disabled) { border-color: var(--primary-color); color: var(--primary-color); }
+    .btn-page:disabled { opacity: 0.4; cursor: not-allowed; }
+    .page-info { font-weight: bold; color: var(--text-main); font-size: 1.1rem; }
+
     .hidden { display: none !important; }
     .no-results { text-align: center; padding: 3rem; color: var(--text-muted); font-weight: bold; }
 
@@ -150,16 +167,15 @@
       .intro-text { width: 240px; height: 120px; margin-top: -35px; }
       
       .ranking-card { padding: 1rem; }
-      .rank-info { gap: 12px; }
-      .rank-num { font-size: 1.5rem; width: 30px; }
-      .rank-name { font-size: 1.1rem; }
-      .rank-stats { flex-direction: column; gap: 2px; font-size: 0.75rem; }
+      .rank-name { font-size: 1.2rem; }
       .rank-score { font-size: 1.4rem; }
+      .btn-page { padding: 0.5rem 1rem; }
     }
   </style>
 </head>
 <body>
 
+  <!-- ✨ オープニング -->
   <div id="intro-screen">
     <div class="intro-container">
       <div class="intro-wing"></div>
@@ -167,6 +183,7 @@
     </div>
   </div>
 
+  <!-- 🏷 ヘッダー -->
   <header>
     <div class="header-left">
       <img src="Flyhigh_logo.png" alt="Logo" class="header-logo">
@@ -185,18 +202,25 @@
     </div>
   </header>
 
+  <!-- 📄 ランキング画面 -->
   <main id="view-ranking">
     <div class="search-bar">
-      <input type="text" id="search-input" placeholder="プレイヤー名で検索 (例: てすぬー)">
+      <!-- 📌 検索プレースホルダーの変更 -->
+      <input type="text" id="search-input" placeholder="🔎｜start.gg登録名 または Discriminator で検索">
     </div>
-    <div style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem; display: flex; justify-content: space-between;">
-      <span>TOKYO / SEEDING RANKING</span>
+    
+    <!-- 📌 「TOKYO / SEEDING RANKING」を削除し、右寄せの人数のみに -->
+    <div class="player-count-header">
       <span id="player-count">0 Players</span>
     </div>
     
     <div id="ranking-list"></div>
+    
+    <!-- 📌 ページネーション領域 -->
+    <div id="pagination-controls" class="pagination-controls"></div>
   </main>
 
+  <!-- ⚙️ シード設定画面 -->
   <main id="view-settings" class="hidden">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
       <h2>シード設定</h2>
@@ -204,13 +228,8 @@
         ◀ <span class="btn-text" style="display: inline;">ランキングに戻る</span>
       </button>
     </div>
-    
     <div class="ranking-card" style="flex-direction: column; align-items: flex-start; gap: 15px;">
       <h3 style="color: var(--primary-color);">認証および設定システム (準備中)</h3>
-      <p style="color: var(--text-muted); line-height: 1.6;">
-        今後のアップデートにて、MTPRと同等の認証ロジックと<br>大会シード作成用のパラメータ調整UIを実装予定です。
-      </p>
-      
       <div style="width: 100%; height: 150px; border: 2px dashed var(--border-color); display: flex; justify-content: center; align-items: center; border-radius: 8px; color: var(--border-color); font-weight: bold;">
         System Building...
       </div>
@@ -218,6 +237,7 @@
   </main>
 
   <script>
+    // --- 🎨 テーマ切り替えロジック ---
     const themeToggle = document.getElementById('theme-toggle');
     const htmlEl = document.documentElement;
     if (htmlEl.getAttribute('data-theme') === 'light') themeToggle.checked = true;
@@ -233,11 +253,7 @@
       setThemeCookie(newTheme);
     });
 
-    window.addEventListener('load', () => {
-      const introScreen = document.getElementById('intro-screen');
-      setTimeout(() => { introScreen.classList.add('intro-hidden'); }, 2500); 
-    });
-
+    // --- 🔀 画面切り替え ---
     document.getElementById('btn-open-settings').addEventListener('click', () => {
       document.getElementById('view-ranking').classList.add('hidden');
       document.getElementById('view-settings').classList.remove('hidden');
@@ -248,53 +264,42 @@
     });
 
     // =========================================================================
-    // 📊 データレンダリング・検索システム
+    // 📊 データレンダリング・検索・ページネーション
     // =========================================================================
     
-    // ユーザー提供のAPI URL
     const API_URL = "https://script.google.com/macros/s/AKfycby9WYK7CP3dUE8E9bdppk35w-k96ahekGS1oDmKIzoHDZnHq9kyLdKtnS7kQZoigQBB/exec";
     
     const rankingList = document.getElementById('ranking-list');
     const searchInput = document.getElementById('search-input');
     const playerCount = document.getElementById('player-count');
+    const paginationControls = document.getElementById('pagination-controls');
     
     let allPlayerData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 30; // 📌 1ページ30人
 
-    function renderPlayers(players) {
+    // 📌 ページ描画関数
+    function renderPage(page) {
       rankingList.innerHTML = ""; 
-      playerCount.textContent = `${players.length} Players`;
+      
+      const startIndex = (page - 1) * ITEMS_PER_PAGE;
+      const endIndex = startIndex + ITEMS_PER_PAGE;
+      const paginatedItems = filteredData.slice(startIndex, endIndex);
 
-      if (players.length === 0) {
+      if (paginatedItems.length === 0) {
         rankingList.innerHTML = `<div class="no-results">該当するプレイヤーが見つかりません。</div>`;
+        paginationControls.innerHTML = "";
         return;
       }
 
-      players.forEach(p => {
-        const winRateDisplay = (p.winRate * 100).toFixed(1) + "%";
-        
-        let sprDisplay = "";
-        let sprClass = "";
-        if (p.avgSpr > 0) {
-          sprDisplay = "+" + p.avgSpr;
-          sprClass = "stat-positive";
-        } else if (p.avgSpr < 0) {
-          sprDisplay = p.avgSpr;
-          sprClass = "stat-negative";
-        } else {
-          sprDisplay = "±0";
-        }
-
+      paginatedItems.forEach(p => {
+        // 📌 順位と名前を2段組にし、勝率・SPRを一旦非表示に
         const cardHTML = `
           <div class="ranking-card">
             <div class="rank-info">
-              <div class="rank-num">${p.rank}</div>
-              <div class="rank-details">
-                <div class="rank-name">${p.tag}</div>
-                <div class="rank-stats">
-                  <span>勝率: ${winRateDisplay}</span>
-                  <span>Avg.SPR: <span class="${sprClass}">${sprDisplay}</span></span>
-                </div>
-              </div>
+              <div class="rank-num">Rank ${p.rank}</div>
+              <div class="rank-name">${p.tag}</div>
             </div>
             <div class="rank-score-area">
               <div class="rank-score">${Math.floor(p.score).toLocaleString()}</div>
@@ -304,35 +309,79 @@
         `;
         rankingList.insertAdjacentHTML('beforeend', cardHTML);
       });
+
+      renderPaginationControls();
     }
 
-    async function loadRankingData() {
-      rankingList.innerHTML = `<div class="no-results">最新のデータベースと同期中... ⏳</div>`;
-      try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-        
-        if (data.error) {
-          rankingList.innerHTML = `<div class="no-results" style="color: #f87171;">エラー: ${data.error}</div>`;
-          return;
-        }
-        
-        allPlayerData = data;
-        renderPlayers(allPlayerData);
-        
-      } catch (error) {
-        rankingList.innerHTML = `<div class="no-results" style="color: #f87171;">データの取得に失敗しました。<br>通信環境を確認するか、GASのデプロイ設定(アクセスできるユーザー: 全員)を確認してください。</div>`;
-        console.error("Fetch error:", error);
+    // 📌 ページネーションUI生成
+    function renderPaginationControls() {
+      const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+      if (totalPages <= 1) {
+        paginationControls.innerHTML = "";
+        return;
       }
+
+      const prevDisabled = currentPage === 1 ? "disabled" : "";
+      const nextDisabled = currentPage === totalPages ? "disabled" : "";
+
+      paginationControls.innerHTML = `
+        <button class="btn-page" ${prevDisabled} onclick="changePage(${currentPage - 1})">◀ 前へ</button>
+        <div class="page-info">${currentPage} / ${totalPages}</div>
+        <button class="btn-page" ${nextDisabled} onclick="changePage(${currentPage + 1})">次へ ▶</button>
+      `;
     }
 
+    // 📌 ページ遷移アクション
+    window.changePage = function(newPage) {
+      currentPage = newPage;
+      renderPage(currentPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // 📌 検索機能 (Discriminatorも含めて検索可能)
     searchInput.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase().trim();
-      const filtered = allPlayerData.filter(p => p.tag.toLowerCase().includes(query));
-      renderPlayers(filtered);
+      filteredData = allPlayerData.filter(p => {
+        // ※ 今後GAS側からDiscriminatorが飛んできたらここで結合して検索対象にできます
+        return p.tag.toLowerCase().includes(query);
+      });
+      currentPage = 1;
+      playerCount.textContent = `${filteredData.length} Players`;
+      renderPage(currentPage);
     });
 
-    window.addEventListener('DOMContentLoaded', loadRankingData);
+    // 📌 【改善】アニメーションとAPI通信の同期
+    window.addEventListener('DOMContentLoaded', async () => {
+      const introScreen = document.getElementById('intro-screen');
+      
+      // ① 最低でも2.5秒間はオープニングアニメーションを見せるためのタイマー
+      const minDelay = new Promise(resolve => setTimeout(resolve, 2500));
+      
+      // ② データのフェッチ処理
+      const fetchData = fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) throw new Error(data.error);
+          allPlayerData = data;
+          filteredData = data;
+        })
+        .catch(err => {
+          console.error(err);
+          rankingList.innerHTML = `<div class="no-results" style="color: #f87171;">エラー: データの取得に失敗しました。<br>通信環境を確認してください。</div>`;
+        });
+
+      // ③ アニメーション時間(2.5s) と データ取得 の両方が完了するまで待機する
+      await Promise.all([minDelay, fetchData]);
+      
+      // ④ 両方完了した瞬間にロード画面を消す
+      introScreen.classList.add('intro-hidden');
+      
+      // ⑤ 初回描画を実行
+      if (allPlayerData.length > 0) {
+        playerCount.textContent = `${allPlayerData.length} Players`;
+        renderPage(1);
+      }
+    });
   </script>
 </body>
 </html>
