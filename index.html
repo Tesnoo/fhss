@@ -66,33 +66,27 @@
     }
     .intro-container { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0; perspective: 1000px; }
     
-    /* 🪽 ロゴ（羽） */
     .intro-wing {
       width: 250px; height: 250px; background-image: url('Flyhigh_logo.png');
       background-size: contain; background-repeat: no-repeat; background-position: bottom center; 
-      transform-origin: center; 
-      /* 📌 ロード中は無限に揺れ続ける */
-      animation: floatWing 1.5s ease-in-out infinite alternate; 
+      transform-origin: center; animation: floatWing 1.5s ease-in-out infinite alternate; 
     }
     @keyframes floatWing { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-5px) rotate(2deg); } }
     
-    /* ✒️ 文字 */
     .intro-text {
       width: 320px; height: 160px; background-position: center center; background-image: var(--intro-text-img);
       background-size: 100% auto; background-repeat: no-repeat; margin-top: -45px; 
-      /* 📌 左からスライドインして、定位置で待機 */
       animation: textSlideIn 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
     }
     @keyframes textSlideIn { 0% { transform: translateX(-50vw); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
 
-    /* ⏳ ローディングテキスト (Now Loading...) */
+    /* ⏳ ローディングテキスト */
     .loading-text {
-      color: var(--text-muted); font-size: 1rem; font-weight: bold; letter-spacing: 0.1em;
-      margin-top: -20px; display: flex; align-items: flex-end; gap: 2px;
+      color: var(--text-muted); font-size: 1.3rem; font-weight: bold; letter-spacing: 0.1em; /* 📌 サイズアップ */
+      margin-top: -10px; display: flex; align-items: flex-end; gap: 2px;
       transition: opacity 0.4s ease;
     }
     .loading-dots { display: inline-flex; }
-    /* 📌 3点リーダーが波打つように跳ねる */
     .loading-dots span { animation: loadingBounce 1.4s infinite ease-in-out both; }
     .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
     .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
@@ -101,19 +95,9 @@
       40% { transform: translateY(-6px); }
     }
 
-    /* 🚀 【データ取得完了時】付与されるクラスによる変化 */
-    .fly-away .intro-wing {
-      /* 羽ばたいて飛んでいく */
-      animation: wingFlyAway 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards; 
-    }
-    .fly-away .intro-text {
-      /* 右へスライドアウト */
-      animation: textSlideOut 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; 
-    }
-    .fly-away .loading-text {
-      /* ロード文字はスッと消える */
-      opacity: 0; 
-    }
+    .fly-away .intro-wing { animation: wingFlyAway 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards; }
+    .fly-away .intro-text { animation: textSlideOut 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+    .fly-away .loading-text { opacity: 0; }
     @keyframes wingFlyAway { 0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; } 20% { transform: translate(10px, 10px) scale(0.9) rotate(-10deg); opacity: 1; } 100% { transform: translate(-100vw, -100vh) scale(0.5) rotate(45deg); opacity: 0; } }
     @keyframes textSlideOut { 0% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(100vw); opacity: 0; } }
 
@@ -143,11 +127,15 @@
     /* 📄 メインコンテンツ領域 */
     main { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
     .search-bar { display: flex; gap: 10px; margin-bottom: 2rem; }
+    
     .search-bar input { 
       flex: 1; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); 
       background-color: var(--card-bg); color: var(--text-main); font-size: 1rem; outline: none; 
     }
     .search-bar input:focus { border-color: var(--primary-color); }
+    
+    /* 📌 プレースホルダーの文字サイズを調整 */
+    .search-bar input::placeholder { font-size: 0.95rem; }
     
     .player-count-header { margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem; display: flex; justify-content: flex-end; font-weight: bold; }
     
@@ -163,7 +151,8 @@
     .rank-name { font-size: 1.4rem; font-weight: 900; word-break: break-all; }
     
     .rank-score-area { text-align: right; }
-    .rank-score { font-size: 1.8rem; font-weight: 900; color: var(--text-main); line-height: 1; }
+    /* 📌 スコアの数字をオレンジに変更 */
+    .rank-score { font-size: 1.8rem; font-weight: 900; color: var(--primary-color); line-height: 1; }
     .rank-score-label { font-size: 0.7rem; color: var(--text-muted); font-weight: bold; margin-top: 4px; letter-spacing: 0.05em; }
     
     /* 📄 ページネーション */
@@ -188,9 +177,12 @@
       .btn-settings { padding: 0.5rem; }
       
       .search-bar { flex-direction: column; margin-bottom: 1.5rem; } 
+      /* 📌 スマホ表示時のプレースホルダーを見切れないように縮小 */
+      .search-bar input::placeholder { font-size: 0.75rem; }
+      
       .intro-wing { width: 180px; height: 180px; } 
       .intro-text { width: 240px; height: 120px; margin-top: -35px; }
-      .loading-text { font-size: 0.85rem; margin-top: -15px; }
+      .loading-text { font-size: 1.1rem; margin-top: -5px; } /* 📌 スマホ用も少しサイズアップ */
       
       .ranking-card { padding: 1rem; }
       .rank-name { font-size: 1.2rem; }
@@ -206,7 +198,6 @@
     <div class="intro-container">
       <div class="intro-wing"></div>
       <div class="intro-text"></div>
-      <!-- ⏳ 追加：ローディングアニメーション文字 -->
       <div class="loading-text">
         Now Loading
         <div class="loading-dots"><span>.</span><span>.</span><span>.</span></div>
@@ -265,7 +256,6 @@
   </main>
 
   <script>
-    // --- 🎨 テーマ切り替えロジック ---
     const themeToggle = document.getElementById('theme-toggle');
     const htmlEl = document.documentElement;
     if (htmlEl.getAttribute('data-theme') === 'light') themeToggle.checked = true;
@@ -281,7 +271,6 @@
       setThemeCookie(newTheme);
     });
 
-    // --- 🔀 画面切り替え ---
     document.getElementById('btn-open-settings').addEventListener('click', () => {
       document.getElementById('view-ranking').classList.add('hidden');
       document.getElementById('view-settings').classList.remove('hidden');
@@ -307,6 +296,13 @@
     let currentPage = 1;
     const ITEMS_PER_PAGE = 30;
 
+    // 📌 英語の序数(1st, 2nd, 3rd, 4th...)を生成する関数
+    function getOrdinal(n) {
+      const s = ["th", "st", "nd", "rd"];
+      const v = n % 100;
+      return n + (s[(v - 20) % 10] || s[v] || s[0]);
+    }
+
     function renderPage(page) {
       rankingList.innerHTML = ""; 
       const startIndex = (page - 1) * ITEMS_PER_PAGE;
@@ -323,7 +319,8 @@
         const cardHTML = `
           <div class="ranking-card">
             <div class="rank-info">
-              <div class="rank-num">Rank ${p.rank}</div>
+              <!-- 📌 序数変換関数を適用 -->
+              <div class="rank-num">${getOrdinal(p.rank)}</div>
               <div class="rank-name">${p.tag}</div>
             </div>
             <div class="rank-score-area">
@@ -368,11 +365,8 @@
     // 🚀 アニメーションとAPI通信の同期システム
     window.addEventListener('DOMContentLoaded', async () => {
       const introScreen = document.getElementById('intro-screen');
-      
-      // ① 通信が爆速で終わった場合でも、オープニングを最低1.5秒は魅せるためのタイマー
       const minDelay = new Promise(resolve => setTimeout(resolve, 1500));
       
-      // ② データフェッチ処理
       const fetchData = fetch(API_URL)
         .then(res => res.json())
         .then(data => {
@@ -382,17 +376,12 @@
         })
         .catch(err => {
           console.error(err);
-          // 失敗した場合はエラー表示
           rankingList.innerHTML = `<div class="no-results" style="color: #f87171;">エラー: データの取得に失敗しました。<br>通信環境を確認してください。</div>`;
         });
 
-      // ③ アニメーション確保時間 と データ取得 の両方が完了するまで待機
       await Promise.all([minDelay, fetchData]);
-      
-      // ④ 準備完了の合図（.fly-away クラスを付与）→ 羽ばたきアニメーションが発火
       introScreen.classList.add('fly-away');
       
-      // ⑤ 飛翔アニメーションの長さ（約1秒）を待ってから、ローディング画面を消去＆リスト描画
       setTimeout(() => {
         introScreen.classList.add('intro-hidden');
         if (allPlayerData.length > 0) {
