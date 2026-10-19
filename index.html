@@ -45,10 +45,9 @@
       overflow-x: hidden;
     }
 
-    /* 🔘 トグルスイッチ (ヘッダー内) */
+    /* 🔘 トグルスイッチ */
     .theme-switch { position: relative; display: inline-block; width: 54px; height: 28px; flex-shrink: 0; }
     .theme-switch input { opacity: 0; width: 0; height: 0; }
-    
     .slider {
       position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
       background-color: #333; transition: .3s; border-radius: 34px; border: 1px solid #555;
@@ -61,58 +60,26 @@
     input:checked + .slider { background-color: #e1e4e8; border-color: #ccc; }
     input:checked + .slider:before { transform: translateX(26px); content: "☀️"; background-color: #ffffff; }
 
-    /* ✨ オープニングトランジション画面 */
+    /* ✨ オープニング */
     #intro-screen {
       position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
       background-color: var(--bg-color); display: flex; justify-content: center;
       align-items: center; z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s ease;
     }
-
-    .intro-container {
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      gap: 0; perspective: 1000px;
-    }
-
+    .intro-container { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0; perspective: 1000px; }
     .intro-wing {
-      width: 250px;
-      height: 250px;
-      background-image: url('Flyhigh_logo.png');
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: bottom center; 
-      transform-origin: center;
-      animation: floatWing 1.5s ease-in-out infinite alternate, wingFlyAway 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) 1.5s forwards;
+      width: 250px; height: 250px; background-image: url('Flyhigh_logo.png');
+      background-size: contain; background-repeat: no-repeat; background-position: bottom center; 
+      transform-origin: center; animation: floatWing 1.5s ease-in-out infinite alternate, wingFlyAway 1s cubic-bezier(0.55, 0.085, 0.68, 0.53) 1.5s forwards;
     }
-    
-    @keyframes floatWing {
-      0%   { transform: translateY(0) rotate(0deg); }
-      100% { transform: translateY(-5px) rotate(2deg); }
-    }
-
-    @keyframes wingFlyAway {
-      0%   { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
-      20%  { transform: translate(10px, 10px) scale(0.9) rotate(-10deg); opacity: 1; }
-      100% { transform: translate(-100vw, -100vh) scale(0.5) rotate(45deg); opacity: 0; }
-    }
-
+    @keyframes floatWing { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-5px) rotate(2deg); } }
+    @keyframes wingFlyAway { 0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; } 20% { transform: translate(10px, 10px) scale(0.9) rotate(-10deg); opacity: 1; } 100% { transform: translate(-100vw, -100vh) scale(0.5) rotate(45deg); opacity: 0; } }
     .intro-text {
-      width: 320px;  
-      height: 160px; 
-      background-position: center center; 
-      background-image: var(--intro-text-img);
-      background-size: 100% auto; 
-      background-repeat: no-repeat;
-      margin-top: -45px; 
+      width: 320px; height: 160px; background-position: center center; background-image: var(--intro-text-img);
+      background-size: 100% auto; background-repeat: no-repeat; margin-top: -45px; 
       animation: textSlideInOut 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
-
-    @keyframes textSlideInOut {
-      0%   { transform: translateX(-50vw); opacity: 0; }
-      20%  { transform: translateX(0); opacity: 1; }
-      60%  { transform: translateX(0); opacity: 1; }
-      100% { transform: translateX(100vw); opacity: 0; }
-    }
-
+    @keyframes textSlideInOut { 0% { transform: translateX(-50vw); opacity: 0; } 20% { transform: translateX(0); opacity: 1; } 60% { transform: translateX(0); opacity: 1; } 100% { transform: translateX(100vw); opacity: 0; } }
     .intro-hidden { opacity: 0 !important; visibility: hidden !important; pointer-events: none; }
 
     /* 📱 ヘッダー */
@@ -121,15 +88,12 @@
       padding: 1rem 2rem; background-color: var(--card-bg);
       border-bottom: 1px solid var(--border-color); height: 75px; 
     }
-    
     .header-left { display: flex; align-items: center; gap: 15px; }
     .header-logo { width: 45px; height: 45px; object-fit: contain; }
-    
     .header-title-container { display: flex; flex-direction: column; justify-content: center; line-height: 1.1; }
     .header-title-main { font-size: 1.8rem; font-weight: 900; letter-spacing: 0.05em; }
     .header-title-main span.highlight { color: var(--primary-color); }
     .header-title-sub { font-size: 0.85rem; color: var(--text-muted); letter-spacing: 0.03em; }
-    
     .header-right { display: flex; align-items: center; gap: 15px; }
     
     .btn-settings {
@@ -145,14 +109,31 @@
     .search-bar input { flex: 1; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-main); font-size: 1rem; outline: none; transition: border-color 0.2s; }
     .search-bar input:focus { border-color: var(--primary-color); }
     
-    .ranking-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; transition: transform 0.2s, box-shadow 0.2s; }
+    /* 🏆 ランキングカードの拡張 */
+    .ranking-card {
+      background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px;
+      padding: 1.2rem 1.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
     .ranking-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(250, 133, 52, 0.15); border-color: var(--primary-color); }
-    .rank-info { display: flex; align-items: center; gap: 15px; }
-    .rank-num { font-size: 1.5rem; font-weight: bold; color: var(--text-muted); width: 40px; }
-    .rank-name { font-size: 1.2rem; font-weight: bold; }
-    .rank-score { font-size: 1.5rem; font-weight: 900; color: var(--primary-color); }
+    
+    .rank-info { display: flex; align-items: center; gap: 20px; flex: 1; }
+    .rank-num { font-size: 1.8rem; font-weight: 900; color: var(--text-muted); width: 45px; text-align: center; }
+    
+    .rank-details { display: flex; flex-direction: column; gap: 4px; }
+    .rank-name { font-size: 1.3rem; font-weight: bold; }
+    
+    /* 追加したデータ(勝率・SPR)を表示するサブエリア */
+    .rank-stats { display: flex; gap: 15px; font-size: 0.85rem; color: var(--text-muted); font-weight: bold; }
+    .stat-positive { color: #4ade80; } /* SPR上振れ時の色 */
+    .stat-negative { color: #f87171; } /* SPR下振れ時の色 */
+    
+    .rank-score-area { text-align: right; }
+    .rank-score { font-size: 1.8rem; font-weight: 900; color: var(--primary-color); line-height: 1; }
+    .rank-score-label { font-size: 0.7rem; color: var(--text-muted); font-weight: bold; margin-top: 4px; letter-spacing: 0.05em; }
     
     .hidden { display: none !important; }
+    .no-results { text-align: center; padding: 3rem; color: var(--text-muted); font-weight: bold; }
 
     /* 📱 スマホ画面での最適化 */
     @media (max-width: 600px) { 
@@ -160,23 +141,28 @@
       .header-logo { width: 35px; height: 35px; }
       .header-left { gap: 10px; }
       .header-right { gap: 10px; }
-      
       .header-title-main { font-size: 1.5rem; }
-      /* 📌 スマホ表示時もサブタイトルを表示し、サイズを小さく調整して収める */
       .header-title-sub { font-size: 0.65rem; }
-      
       .btn-text { display: none; }
       .btn-settings { padding: 0.5rem; }
       
-      .search-bar { flex-direction: column; } 
-      
+      .search-bar { flex-direction: column; margin-bottom: 1.5rem; } 
       .intro-wing { width: 180px; height: 180px; } 
       .intro-text { width: 240px; height: 120px; margin-top: -35px; }
+      
+      /* スマホ用カード調整 */
+      .ranking-card { padding: 1rem; }
+      .rank-info { gap: 12px; }
+      .rank-num { font-size: 1.5rem; width: 30px; }
+      .rank-name { font-size: 1.1rem; }
+      .rank-stats { flex-direction: column; gap: 2px; font-size: 0.75rem; }
+      .rank-score { font-size: 1.4rem; }
     }
   </style>
 </head>
 <body>
 
+  <!-- ✨ オープニングトランジション画面 -->
   <div id="intro-screen">
     <div class="intro-container">
       <div class="intro-wing"></div>
@@ -184,6 +170,7 @@
     </div>
   </div>
 
+  <!-- 🏷 ヘッダー -->
   <header>
     <div class="header-left">
       <img src="Flyhigh_logo.png" alt="Logo" class="header-logo">
@@ -202,23 +189,21 @@
     </div>
   </header>
 
+  <!-- 📄 ランキング画面 (メイン) -->
   <main id="view-ranking">
     <div class="search-bar">
-      <input type="text" placeholder="プレイヤー名で検索 (例: てすぬー)">
+      <input type="text" id="search-input" placeholder="プレイヤー名で検索 (例: てすぬー)">
     </div>
-    <div style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem;">
-      TOKYO / SEEDING RANKING
+    <div style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem; display: flex; justify-content: space-between;">
+      <span>TOKYO / SEEDING RANKING</span>
+      <span id="player-count">0 Players</span>
     </div>
-    <div class="ranking-card">
-      <div class="rank-info"><div class="rank-num">1</div><div class="rank-name">Player A</div></div>
-      <div class="rank-score">12,450</div>
-    </div>
-    <div class="ranking-card">
-      <div class="rank-info"><div class="rank-num">2</div><div class="rank-name">Player B</div></div>
-      <div class="rank-score">10,800</div>
-    </div>
+    
+    <!-- ランキングリストがここに入ります -->
+    <div id="ranking-list"></div>
   </main>
 
+  <!-- ⚙️ シード設定画面 -->
   <main id="view-settings" class="hidden">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
       <h2>シード設定</h2>
@@ -240,13 +225,13 @@
   </main>
 
   <script>
+    // --- 🎨 テーマ切り替えロジック ---
     const themeToggle = document.getElementById('theme-toggle');
     const htmlEl = document.documentElement;
     if (htmlEl.getAttribute('data-theme') === 'light') themeToggle.checked = true;
 
     function setThemeCookie(themeName) {
-      const d = new Date();
-      d.setTime(d.getTime() + (30 * 24 * 60 * 60 * 1000));
+      const d = new Date(); d.setTime(d.getTime() + (30 * 24 * 60 * 60 * 1000));
       document.cookie = "fhsp_theme=" + themeName + ";expires=" + d.toUTCString() + ";path=/";
     }
 
@@ -256,26 +241,104 @@
       setThemeCookie(newTheme);
     });
 
+    // --- 🎬 オープニング ---
     window.addEventListener('load', () => {
       const introScreen = document.getElementById('intro-screen');
-      setTimeout(() => {
-        introScreen.classList.add('intro-hidden');
-      }, 2500); 
+      setTimeout(() => { introScreen.classList.add('intro-hidden'); }, 2500); 
     });
 
-    const viewRanking = document.getElementById('view-ranking');
-    const viewSettings = document.getElementById('view-settings');
-    const btnOpenSettings = document.getElementById('btn-open-settings');
-    const btnCloseSettings = document.getElementById('btn-close-settings');
-
-    btnOpenSettings.addEventListener('click', () => {
-      viewRanking.classList.add('hidden');
-      viewSettings.classList.remove('hidden');
+    // --- 🔀 画面切り替え ---
+    document.getElementById('btn-open-settings').addEventListener('click', () => {
+      document.getElementById('view-ranking').classList.add('hidden');
+      document.getElementById('view-settings').classList.remove('hidden');
+    });
+    document.getElementById('btn-close-settings').addEventListener('click', () => {
+      document.getElementById('view-settings').classList.add('hidden');
+      document.getElementById('view-ranking').classList.remove('hidden');
     });
 
-    btnCloseSettings.addEventListener('click', () => {
-      viewSettings.classList.add('hidden');
-      viewRanking.classList.remove('hidden');
+    // =========================================================================
+    // 📊 データレンダリング・検索システム
+    // =========================================================================
+    
+    // ※今後、GASから取得するJSONデータの構造イメージ（モックデータ）
+    const mockData = [
+      { rank: 1, tag: "てすぬー", score: 18450.5, winRate: 0.725, avgSpr: 1.5 },
+      { rank: 2, tag: "Player A", score: 15200.0, winRate: 0.680, avgSpr: 0.8 },
+      { rank: 3, tag: "Player B", score: 14850.2, winRate: 0.665, avgSpr: 1.2 },
+      { rank: 4, tag: "Player C", score: 12100.0, winRate: 0.610, avgSpr: -0.5 },
+      { rank: 5, tag: "スマブラ太郎", score: 9800.8, winRate: 0.550, avgSpr: 0.0 },
+      { rank: 6, tag: "Player D", score: 8500.0, winRate: 0.510, avgSpr: -1.2 },
+      { rank: 7, tag: "Player E", score: 7200.4, winRate: 0.490, avgSpr: 0.3 }
+    ];
+
+    const rankingList = document.getElementById('ranking-list');
+    const searchInput = document.getElementById('search-input');
+    const playerCount = document.getElementById('player-count');
+
+    // プレイヤーを描画する関数
+    function renderPlayers(players) {
+      rankingList.innerHTML = ""; // 一旦リセット
+      playerCount.textContent = `${players.length} Players`;
+
+      if (players.length === 0) {
+        rankingList.innerHTML = `<div class="no-results">該当するプレイヤーが見つかりません。</div>`;
+        return;
+      }
+
+      players.forEach(p => {
+        // 勝率の％表示 (例: 0.725 -> 72.5%)
+        const winRateDisplay = (p.winRate * 100).toFixed(1) + "%";
+        
+        // SPRの装飾 (プラスなら緑、マイナスなら赤)
+        let sprDisplay = "";
+        let sprClass = "";
+        if (p.avgSpr > 0) {
+          sprDisplay = "+" + p.avgSpr;
+          sprClass = "stat-positive";
+        } else if (p.avgSpr < 0) {
+          sprDisplay = p.avgSpr;
+          sprClass = "stat-negative";
+        } else {
+          sprDisplay = "±0";
+        }
+
+        // HTMLを生成
+        const cardHTML = `
+          <div class="ranking-card">
+            <div class="rank-info">
+              <div class="rank-num">${p.rank}</div>
+              <div class="rank-details">
+                <div class="rank-name">${p.tag}</div>
+                <div class="rank-stats">
+                  <span>勝率: ${winRateDisplay}</span>
+                  <span>Avg.SPR: <span class="${sprClass}">${sprDisplay}</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="rank-score-area">
+              <div class="rank-score">${Math.floor(p.score).toLocaleString()}</div>
+              <div class="rank-score-label">FHSP</div>
+            </div>
+          </div>
+        `;
+        rankingList.insertAdjacentHTML('beforeend', cardHTML);
+      });
+    }
+
+    // 初回レンダリング
+    renderPlayers(mockData);
+
+    // 検索機能のイベントリスナー（入力するたびに即時フィルタリング）
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      
+      const filtered = mockData.filter(p => {
+        // tag (プレイヤー名) に検索文字が含まれているかチェック
+        return p.tag.toLowerCase().includes(query);
+      });
+      
+      renderPlayers(filtered);
     });
   </script>
 </body>
