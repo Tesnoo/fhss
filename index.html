@@ -97,14 +97,11 @@
 
     .intro-text {
       width: 320px;  
-      /* 📌 高さを広げて見切れを完全に防ぐ */
       height: 160px; 
-      /* 📌 画像の中央（文字部分）を必ず表示させる */
       background-position: center center; 
       background-image: var(--intro-text-img);
       background-size: 100% auto; 
       background-repeat: no-repeat;
-      /* 📌 枠を広げた分、ネガティブマージンでロゴとの距離を調整 */
       margin-top: -45px; 
       animation: textSlideInOut 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     }
@@ -165,7 +162,8 @@
       .header-right { gap: 10px; }
       
       .header-title-main { font-size: 1.5rem; }
-      .header-title-sub { display: none; }
+      /* 📌 スマホ表示時もサブタイトルを表示し、サイズを小さく調整して収める */
+      .header-title-sub { font-size: 0.65rem; }
       
       .btn-text { display: none; }
       .btn-settings { padding: 0.5rem; }
@@ -173,14 +171,12 @@
       .search-bar { flex-direction: column; } 
       
       .intro-wing { width: 180px; height: 180px; } 
-      /* 📌 スマホ版も見切れ防止＆距離調整 */
       .intro-text { width: 240px; height: 120px; margin-top: -35px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ✨ オープニングトランジション画面 -->
   <div id="intro-screen">
     <div class="intro-container">
       <div class="intro-wing"></div>
@@ -188,7 +184,6 @@
     </div>
   </div>
 
-  <!-- 🏷 ヘッダー -->
   <header>
     <div class="header-left">
       <img src="Flyhigh_logo.png" alt="Logo" class="header-logo">
@@ -207,7 +202,6 @@
     </div>
   </header>
 
-  <!-- 📄 ランキング画面 (メイン) -->
   <main id="view-ranking">
     <div class="search-bar">
       <input type="text" placeholder="プレイヤー名で検索 (例: てすぬー)">
@@ -225,7 +219,6 @@
     </div>
   </main>
 
-  <!-- ⚙️ シード設定画面 -->
   <main id="view-settings" class="hidden">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
       <h2>シード設定</h2>
